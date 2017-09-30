@@ -129,10 +129,16 @@
             this.updateCellColor('dead', x, y);
         },
 
+        /**
+         *  Helper function returning a boolean based on the given probability.
+         */
         getRandomAnswer: function(probability) {
             return Math.random() < probability;
         },
 
+        /**
+         *  Helper function returning an intenger between min and max.
+         */
         getRandomInt: function(minMax) {
             var min = Math.ceil(minMax[0]);
             var max = Math.floor(minMax[1]);
@@ -163,19 +169,22 @@
                     t = (x + i + this.settings.size) % this.settings.size;
                     s = (y + j + this.settings.size) % this.settings.size;
 
+                    // cell has not been sick, yet.
                     if (typeof this.population[t][s] == 'undefined') {
-                        // An individual is ill for a random number of days during which time there is a probability that the individual infects each of its direct neighbors (normally 8) in the population. 
                         if (this.getRandomAnswer(this.settings.probabilityToInfectNeighbour)) {
                             this.contaminateCell(t, s);
                         }
+
+                    // cell is currently sick
                     }else if (Number.isInteger(this.population[t][s])) {
                         this.future[t][s] = this.population[t][s] - 1;
 
+                        // cell overcomes sickness
                         if (this.population[t][s] == 0) {
-                            // An individual who has been ill but recovered, i.e. who is healthy, is immune and cannot be infected again.
                             this.future[t][s] = this.states.immune;
+
+                        // cell dies
                         }else if (this.getRandomAnswer(this.settings.probabilityOfDeath)) {
-                            // Every day an individual is ill, there is also a probability that the individual dies. 
                             this.future[t][s] = this.states.dead;
                         }
                     }
