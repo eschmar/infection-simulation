@@ -1,0 +1,9 @@
+body  {
+    background-color: #fafafa;
+    padding: 32px 48px;
+}
+
+#game {
+    border: 1px solid #ececec;
+    background-color: white;
+}
