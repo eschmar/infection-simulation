@@ -20,7 +20,7 @@
 
         $game.infectionSimulation({
             onClick: function(game, x, y) {
-                game.forceUpdateCell('sick', x,y);
+                game.contaminateCell(x,y);
             }
         });
 

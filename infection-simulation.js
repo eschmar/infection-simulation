@@ -87,16 +87,16 @@
             });
         },
 
-        forceUpdateCell: function(state, x, y) {
-            if (state === this.states.sick) {
-                this.future[x][y] = this.getRandomInt(this.settings.lengthOfIllness[0], this.settings.lengthOfIllness[1]);
-            }else {
-                this.future[x][y] = state;
-            }
-
-            this.updateCellColor(state, x, y);
+        /**
+         *  Triggers sickness on a cell.
+         */
+        contaminateCell: function(x, y) {
+            this.future[x][y] = this.getRandomInt(this.settings.lengthOfIllness);
         },
 
+        /**
+         *  Update a cell's color according to its state.
+         */
         updateCellColor: function(state, x, y) {
             var color = this.settings.colors[state];
             this.ctx.fillStyle = color;
@@ -115,10 +115,16 @@
             this.updateCellColor('sick', x, y);
         },
 
+        /**
+         *  Mark a single cell as immune.
+         */
         markAsImmune: function(x, y) {
             this.updateCellColor('immune', x, y);
         },
 
+        /**
+         *  Mark a single cell as dead.
+         */
         markAsDead: function(x, y) {
             this.updateCellColor('dead', x, y);
         },
@@ -127,9 +133,9 @@
             return Math.random() < probability;
         },
 
-        getRandomInt: function(min, max) {
-            min = Math.ceil(min);
-            max = Math.floor(max);
+        getRandomInt: function(minMax) {
+            var min = Math.ceil(minMax[0]);
+            var max = Math.floor(minMax[1]);
             return Math.floor(Math.random() * (max - min)) + min;
         },
 
@@ -160,7 +166,7 @@
                     if (typeof this.population[t][s] == 'undefined') {
                         // An individual is ill for a random number of days during which time there is a probability that the individual infects each of its direct neighbors (normally 8) in the population. 
                         if (this.getRandomAnswer(this.settings.probabilityToInfectNeighbour)) {
-                            this.future[t][s] = this.getRandomInt(this.settings.lengthOfIllness[0], this.settings.lengthOfIllness[1]);
+                            this.contaminateCell(t, s);
                         }
                     }else if (Number.isInteger(this.population[t][s])) {
                         this.future[t][s] = this.population[t][s] - 1;
