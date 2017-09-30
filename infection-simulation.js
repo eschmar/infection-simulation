@@ -52,6 +52,7 @@
 
         this.states = states;
         this.init();
+        this.future = $.extend(true, [], this.population);
     }
 
     $.extend(InfectionSimulation.prototype, {
@@ -92,6 +93,7 @@
          */
         contaminateCell: function(x, y) {
             this.future[x][y] = this.getRandomInt(this.settings.lengthOfIllness);
+            this.updateCellColor('sick', x, y);
         },
 
         /**
@@ -198,7 +200,6 @@
         advance: function() {
             // hard copy current population
             this.future = $.extend(true, [], this.population);
-
 
             // live life
             for (var i = 0; i < this.settings.size; i++) {
