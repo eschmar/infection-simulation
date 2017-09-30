@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body style="background-color: #fafafa;">
+    <header>
+        Infection Simulation
+    </header>
+
+    <section class="simulation">
+        <canvas id="game" style="border: 1px solid #ececec; background-color: white;" width="500" height="500"></canvas>
+    </section>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="infection-simulation.js"></script>
+    <script>
+        // game of life
+        var $game = $('#game');
+
+        $game.infectionSimulation({
+            onClick: function(game, x, y) {
+                game.forceUpdateCell('sick', x,y);
+            }
+        });
+
+        var game = $game.data("infectionSimulation");
+        game.toggle();
+
+        document.addEventListener('keydown', function(event) {
+            switch (event.keyCode) {
+                case 84:
+                    game.toggle();
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>
