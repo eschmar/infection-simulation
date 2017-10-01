@@ -58,14 +58,14 @@
                     <span class="muted">Sickness lasts from</span>
 
                     <div class="mdl-textfield mdl-js-textfield">
-                        <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" value="14" id="length_from">
+                        <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" value="7" id="length_from">
                         <label class="mdl-textfield__label" for="length_from">From</label>
                     </div>
 
                     <span class="muted">to</span>
 
                     <div class="mdl-textfield mdl-js-textfield">
-                        <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" value="28" id="length_to">
+                        <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" value="14" id="length_to">
                         <label class="mdl-textfield__label" for="length_to">To</label>
                     </div>
 
@@ -128,12 +128,12 @@
             var lengthTo = parseInt($lengthTo.val());
 
             // input validation
-            if (isNaN(lengthFrom) || lengthFrom > lengthTo) {
-                $lengthFrom.val(14);
-                $lengthTo.val(28);
+            if (isNaN(lengthFrom) || lengthFrom < 0 || lengthFrom > lengthTo) {
+                $lengthFrom.val(7);
+                $lengthTo.val(14);
                 return;
-            }else if (isNaN(lengthTo) || lengthFrom > lengthTo) {
-                $lengthTo.val(28);
+            }else if (isNaN(lengthTo) || lengthTo < 0 || lengthFrom > lengthTo) {
+                $lengthTo.val(14);
                 return;
             }
 

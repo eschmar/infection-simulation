@@ -196,10 +196,34 @@
          *  - An individual who has been ill but recovered, i.e. who is healthy, is immune and cannot be infected again.
          */
         live: function(x, y){
+            // if not infected, do nothing
             if (!Number.isInteger(this.population[x][y])) {
                 return;
             }
 
+            // currently infected
+            var daysToBeSick = this.population[x][y];
+
+            // cell overcomes sickness
+            if (daysToBeSick <= 0) {
+                this.future[x][y] = this.states.immune;
+
+            // cell dies
+            }else if (daysToBeSick > 0 && this.getRandomAnswer(this.settings.probabilityOfDeath)) {
+                this.future[x][y] = this.states.dead;
+
+            // cell continues to be sick
+            }else {
+                this.future[x][y] = daysToBeSick - 1;
+            }
+
+            this.infectNeighboursOf(x, y);
+        },
+
+        /**
+         *  Tries to infect all neighbours.
+         */
+        infectNeighboursOf: function(x, y) {
             // visit all neighbours
             var t, s;
             for (var i = -1; i < 2; i++) {
@@ -207,25 +231,14 @@
                     t = (x + i + this.settings.size) % this.settings.size;
                     s = (y + j + this.settings.size) % this.settings.size;
 
+                    // skip x,y itself
                     if (x == t && y == s) { continue; }
 
                     // cell has not been sick, yet.
                     if (typeof this.population[t][s] == 'undefined') {
+
                         if (this.getRandomAnswer(this.settings.probabilityToInfectNeighbour)) {
                             this.contaminateCell(t, s);
-                        }
-
-                    // cell is currently sick
-                    }else if (Number.isInteger(this.population[t][s])) {
-                        this.future[t][s] = this.population[t][s] - 1;
-
-                        // cell overcomes sickness
-                        if (this.population[t][s] == 0) {
-                            this.future[t][s] = this.states.immune;
-
-                        // cell dies
-                        }else if (this.getRandomAnswer(this.settings.probabilityOfDeath)) {
-                            this.future[t][s] = this.states.dead;
                         }
                     }
                 }
