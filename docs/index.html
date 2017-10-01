@@ -42,18 +42,22 @@
             </div>
 
             <div class="mdl-card__actions mdl-card--border">
-                <label class="muted" for="size">Simulation size [5,500]:
-                <input class="mdl-slider mdl-js-slider" type="range" id="size" min="5" max="500" value="50" step="5"></label>
-                
+                <label class="muted" for="speed">Simulation speed [50,1000] ms:
+                <input class="mdl-slider mdl-js-slider" type="range" id="speed" min="50" max="1000" value="50" step="5"></label>
             </div>
 
             <div class="mdl-card__actions mdl-card--border">
-                <label class="muted" for="infection">Probability of infecting neighbours [0,100]:</label>
+                <label class="muted" for="size">Simulation size [5,500]:
+                <input class="mdl-slider mdl-js-slider" type="range" id="size" min="5" max="500" value="50" step="5"></label>
+            </div>
+
+            <div class="mdl-card__actions mdl-card--border">
+                <label class="muted" for="infection">Infection probability [0,100] percent:</label>
                 <input class="mdl-slider mdl-js-slider" type="range" id="infection" min="0" max="100" value="2" step="1">
             </div>
 
             <div class="mdl-card__actions mdl-card--border">
-                <label class="muted" for="death">Probability of dying while infected [0,100]:</label>
+                <label class="muted" for="death">Death probability [0,100] percent:</label>
                 <input class="mdl-slider mdl-js-slider" type="range" id="death" min="0" max="100" value="2" step="1">
             </div>
 
@@ -95,6 +99,7 @@
     <script>
         var $simulation = $('#simulation');
 
+        var $speed = $('#speed');
         var $infection = $('#infection');
         var $death = $('#death');
         var $size = $('#size');
@@ -104,28 +109,6 @@
         var $toggle = $('#toggle');
         var $toggleLabel = $('#toggle-label');
         var $reset = $('#reset');
-
-        function initSimulation() {
-            $simulation.replaceWith('<canvas id="simulation"></canvas>');
-            $simulation = $('#simulation');
-
-            $simulation.infectionSimulation({
-                size: parseInt($size.val()),
-                probabilityToInfectNeighbour: (parseInt($infection.val()) / 100),
-                lengthOfIllness: [parseInt($lengthFrom.val()), parseInt($lengthTo.val())],
-                probabilityOfDeath: (parseInt($death.val()) / 100),
-                onClick: function(simulation, x, y) {
-                    simulation.contaminateCell(x,y, true);
-                }
-            });
-
-            window.simulation = $simulation.data("infectionSimulation");
-            $('#simulation-card').width($simulation.width() > 500 ? $simulation.width() : 500);
-
-            if ($toggleLabel.get(0).MaterialSwitch) {
-                $toggleLabel.get(0).MaterialSwitch.off();
-            }
-        }
 
         function updateSettings() {
             var lengthFrom = parseInt($lengthFrom.val());
@@ -142,10 +125,32 @@
             }
 
             window.simulation.updateSettings({
+                speed: parseInt($speed.val()),
                 probabilityToInfectNeighbour: (parseInt($infection.val()) / 100),
                 lengthOfIllness: [parseInt($lengthFrom.val()), parseInt($lengthTo.val())],
                 probabilityOfDeath: (parseInt($death.val()) / 100),
             });
+        }
+
+        function initSimulation() {
+            $simulation.replaceWith('<canvas id="simulation"></canvas>');
+            $simulation = $('#simulation');
+
+            $simulation.infectionSimulation({
+                size: parseInt($size.val()),
+                onClick: function(simulation, x, y) {
+                    simulation.contaminateCell(x,y, true);
+                }
+            });
+
+            window.simulation = $simulation.data("infectionSimulation");
+            updateSettings();
+
+            $('#simulation-card').width($simulation.width() > 500 ? $simulation.width() : 500);
+
+            if ($toggleLabel.get(0).MaterialSwitch) {
+                $toggleLabel.get(0).MaterialSwitch.off();
+            }
         }
 
         initSimulation();
@@ -154,7 +159,7 @@
             initSimulation();
         });
 
-        $('#infection, #death, #length_from, #length_to').change(function() {
+        $('#speed, #infection, #death, #length_from, #length_to').change(function() {
             updateSettings();
         });
 

@@ -21,7 +21,6 @@
             sick: '#AA3939',
             dead: '#333333'
         },
-        colorEmpty: '#fafafa',
         transparent: true,
         speed: 50,
         onClick: false
@@ -317,8 +316,18 @@
         },
 
         updateSettings: function(options) {
+            var updateTimer = false;
+            if (options.speed && options.speed != this.settings.speed && this.alive) {
+                updateTimer = true;
+            }
+
             // merge settings with new values
             this.settings = $.extend({}, this.settings, options);
+
+            if (updateTimer) {
+                this.toggle();
+                this.toggle();
+            }
         }
     });
 
