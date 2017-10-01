@@ -46,6 +46,10 @@ body  {
     text-align: center;
 }
 
+.mdl-card__actions.hover:hover {
+    background: #fafafa;
+}
+
 canvas {
     margin: 0 auto;
 }
