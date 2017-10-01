@@ -132,6 +132,13 @@
         },
 
         /**
+         *  Reset a single cell.
+         */
+        resetCell: function(x, y) {
+            this.updateCellColor('initial', x, y);
+        },
+
+        /**
          *  Helper function returning a boolean based on the given probability.
          */
         getRandomAnswer: function(probability) {
@@ -225,6 +232,20 @@
             
             // back to the future
             this.population = this.future;
+        },
+
+        /**
+         *  Reset the simulation.
+         */
+        reset: function() {
+            this.init();
+
+            // reset cells
+            for (var i = 0; i < this.settings.size; i++) {
+                for (var j = 0; j < this.settings.size; j++) {
+                    this.resetCell(i, j);
+                }
+            }
         },
 
         /**

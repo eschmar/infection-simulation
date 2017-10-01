@@ -1,9 +1,26 @@
 body  {
-    background-color: #fafafa;
-    padding: 32px 48px;
+    background-color: #f7f7f7;
 }
 
-#game {
-    border: 1px solid #ececec;
-    background-color: white;
+.simulation {
+    margin-top: 24px;
+    margin-bottom: 72px;
+}
+
+.simulation > .mdl-card {
+    width: 500px;
+    margin: 0 auto;
+}
+
+.simulation > .mdl-card .mdl-card__media {
+    background-color: transparent;
+}
+
+#toggle-label {
+    width: auto;
+    margin-left: 12px;
+}
+
+.mdl-card__supporting-text {
+    // width: 100%;
 }
