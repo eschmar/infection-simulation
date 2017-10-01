@@ -171,7 +171,16 @@
          *  Helper function returning a boolean based on the given probability.
          */
         getRandomAnswer: function(probability) {
-            return Math.random() < probability;
+            var random;
+            if (window.crypto) {
+                var values = new Uint32Array(1);
+                window.crypto.getRandomValues(values);
+                var random = (values[0] % 100) / 100;
+            }else {
+                random = Math.random();
+            }
+
+            return random < probability;
         },
 
         /**
@@ -236,7 +245,6 @@
 
                     // cell has not been sick, yet.
                     if (typeof this.population[t][s] == 'undefined') {
-
                         if (this.getRandomAnswer(this.settings.probabilityToInfectNeighbour)) {
                             this.contaminateCell(t, s);
                         }
