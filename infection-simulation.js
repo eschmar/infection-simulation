@@ -92,7 +92,9 @@
          *  Triggers sickness on a cell.
          */
         contaminateCell: function(x, y) {
-            this.future[x][y] = this.getRandomInt(this.settings.lengthOfIllness);
+            var randomLength = this.getRandomInt(this.settings.lengthOfIllness);
+            this.population[x][y] = randomLength;
+            this.future[x][y] = randomLength;
             this.updateCellColor('sick', x, y);
         },
 
