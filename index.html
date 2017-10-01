@@ -1,7 +1,11 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>Infection Simulation</title>
+    <meta name="description" content="Infection Simulation">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-deep_purple.min.css">
@@ -9,7 +13,7 @@
 </head>
 <body>
     <section class="simulation">
-        <div class="mdl-card mdl-shadow--2dp">
+        <div id="simulation-card" class="mdl-card mdl-shadow--2dp">
             <div class="mdl-card__title mdl-card--border">
                 Infection Simulation
 
@@ -20,34 +24,54 @@
             </div>
 
             <div class="mdl-card__supporting-text">
-                Click on the simulation field.
+                Click on the simulation field to contaminate individuals.
             </div>
 
             <div class="mdl-card__media">
-                <canvas id="game" width="500" height="500"></canvas>
+                <canvas id="simulation"></canvas>
             </div>
+        </div>
 
-            <!-- <div class="mdl-card__actions mdl-card--border">
-                <label for="">Probability of infecting neighbours:</label>
-                <input class="mdl-slider mdl-js-slider" type="range" id="s1" min="0" max="100" value="40" step="1">
-            </div>
-
-            <div class="mdl-card__actions mdl-card--border">
-                <label for="">Probability of dying while infected:</label>
-                <input class="mdl-slider mdl-js-slider" type="range" id="s1" min="0" max="100" value="10" step="1">
+        <div id="settings-card" class="mdl-card mdl-shadow--2dp">
+            <div class="mdl-card__title mdl-card--border">
+                Settings
             </div>
 
             <div class="mdl-card__actions mdl-card--border">
-                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="length1">
-                    <label class="mdl-textfield__label" for="length1">Minimal sickness length</label>
-                </div>
+                <label class="muted" for="size">Simulation size [5,500]:
+                <input class="mdl-slider mdl-js-slider" type="range" id="size" min="5" max="500" value="50" step="5"></label>
+                
+            </div>
 
-                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="length2">
-                    <label class="mdl-textfield__label" for="length2">Maximal sickness length</label>
+            <div class="mdl-card__actions mdl-card--border">
+                <label class="muted" for="infection">Probability of infecting neighbours [0,100]:</label>
+                <input class="mdl-slider mdl-js-slider" type="range" id="infection" min="0" max="100" value="2" step="1">
+            </div>
+
+            <div class="mdl-card__actions mdl-card--border">
+                <label class="muted" for="death">Probability of dying while infected [0,100]:</label>
+                <input class="mdl-slider mdl-js-slider" type="range" id="death" min="0" max="100" value="2" step="1">
+            </div>
+
+            <div class="mdl-card__actions mdl-card--border">
+                <div class="days">
+                    <span class="muted">Sickness lasts from</span>
+
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" value="14" id="length_from">
+                        <label class="mdl-textfield__label" for="length_from">From</label>
+                    </div>
+
+                    <span class="muted">to</span>
+
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" value="28" id="length_to">
+                        <label class="mdl-textfield__label" for="length_to">To</label>
+                    </div>
+
+                    <span class="muted">days.</span>
                 </div>
-            </div> -->
+            </div>
 
             <div class="mdl-card__actions mdl-card--border">
                 <a id="reset" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
@@ -55,30 +79,87 @@
                 </a>
             </div>
         </div>
+    </div>
+                
+
+                
     </section>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
     <script src="infection-simulation.js"></script>
     <script>
-        // game of life
-        var $game = $('#game');
+        var $simulation = $('#simulation');
 
-        $game.infectionSimulation({
-            onClick: function(game, x, y) {
-                game.contaminateCell(x,y);
+        var $infection = $('#infection');
+        var $death = $('#death');
+        var $size = $('#size');
+        var $lengthFrom = $('#length_from');
+        var $lengthTo = $('#length_to');
+
+        var $toggle = $('#toggle');
+        var $toggleLabel = $('#toggle-label');
+        var $reset = $('#reset');
+
+        function initSimulation() {
+            $simulation.replaceWith('<canvas id="simulation"></canvas>');
+            $simulation = $('#simulation');
+
+            $simulation.infectionSimulation({
+                size: parseInt($size.val()),
+                probabilityToInfectNeighbour: (parseInt($infection.val()) / 100),
+                lengthOfIllness: [parseInt($lengthFrom.val()), parseInt($lengthTo.val())],
+                probabilityOfDeath: (parseInt($death.val()) / 100),
+                onClick: function(simulation, x, y) {
+                    simulation.contaminateCell(x,y, true);
+                }
+            });
+
+            window.simulation = $simulation.data("infectionSimulation");
+            $('#simulation-card').width($simulation.width() > 500 ? $simulation.width() : 500);
+
+            if ($toggleLabel.get(0).MaterialSwitch) {
+                $toggleLabel.get(0).MaterialSwitch.off();
             }
+        }
+
+        function updateSettings() {
+            var lengthFrom = parseInt($lengthFrom.val());
+            var lengthTo = parseInt($lengthTo.val());
+
+            // input validation
+            if (isNaN(lengthFrom) || lengthFrom > lengthTo) {
+                $lengthFrom.val(14);
+                $lengthTo.val(28);
+                return;
+            }else if (isNaN(lengthTo) || lengthFrom > lengthTo) {
+                $lengthTo.val(28);
+                return;
+            }
+
+            window.simulation.updateSettings({
+                probabilityToInfectNeighbour: (parseInt($infection.val()) / 100),
+                lengthOfIllness: [parseInt($lengthFrom.val()), parseInt($lengthTo.val())],
+                probabilityOfDeath: (parseInt($death.val()) / 100),
+            });
+        }
+
+        initSimulation();
+
+        $('#size').change(function() {
+            initSimulation();
         });
 
-        var game = $game.data("infectionSimulation");
-        // game.toggle();
-
-        $('#toggle').change(function() {
-            game.toggle();
+        $('#infection, #death, #length_from, #length_to').change(function() {
+            updateSettings();
         });
 
-        $('#reset').click(function() {
-            game.reset();
+        $toggle.change(function() {
+            window.simulation.toggle();
+        });
+
+        $reset.click(function() {
+            window.simulation.reset();
         });
     </script>
 </body>

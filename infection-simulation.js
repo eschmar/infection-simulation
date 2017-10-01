@@ -16,14 +16,14 @@
         lengthOfIllness: [2, 6],
         probabilityOfDeath: 0.05,
         colors: {
-            initial: 'white',
+            initial: '#ececec',
             immune: '#969320',
-            sick: '#641560',
+            sick: '#AA3939',
             dead: '#000000'
         },
         colorEmpty: '#fafafa',
         transparent: true,
-        speed: 100,
+        speed: 50,
         onClick: false
     };
 
@@ -58,8 +58,30 @@
     $.extend(InfectionSimulation.prototype, {
         init: function (){
             this.ctx = this.element.getContext('2d');
-            this.xLength = Math.floor((this.element.width) / this.settings.size);
-            this.yLength = Math.floor((this.element.height) / this.settings.size);
+
+            var cellSize = 2;
+            if (this.settings.size <= 120) {
+                cellSize = 10;
+            }else if (this.settings.size <= 240) {
+                cellSize = 6;
+            }else if (this.settings.size <= 360) {
+                cellSize = 4;
+            }
+
+            // set the cell size
+            this.xLength = cellSize;
+            this.yLength = cellSize;
+
+            // resizse the canvas
+            this.element.width = this.settings.size * this.xLength;
+            this.element.height = this.settings.size * this.yLength;
+
+            // reset cells
+            for (var i = 0; i < this.settings.size; i++) {
+                for (var j = 0; j < this.settings.size; j++) {
+                    this.resetCell(i, j);
+                }
+            }
 
             // init array
             this.population = [];
@@ -91,10 +113,15 @@
         /**
          *  Triggers sickness on a cell.
          */
-        contaminateCell: function(x, y) {
+        contaminateCell: function(x, y, force) {
+            if (typeof force == 'undefined') { force = false; }
             var randomLength = this.getRandomInt(this.settings.lengthOfIllness);
-            this.population[x][y] = randomLength;
             this.future[x][y] = randomLength;
+
+            if (force) {
+                this.population[x][y] = randomLength;
+            }
+
             this.updateCellColor('sick', x, y);
         },
 
@@ -180,6 +207,8 @@
                     t = (x + i + this.settings.size) % this.settings.size;
                     s = (y + j + this.settings.size) % this.settings.size;
 
+                    if (x == t && y == s) { continue; }
+
                     // cell has not been sick, yet.
                     if (typeof this.population[t][s] == 'undefined') {
                         if (this.getRandomAnswer(this.settings.probabilityToInfectNeighbour)) {
@@ -264,6 +293,11 @@
                 clearInterval(this.timer);
                 this.alive = false;
             }
+        },
+
+        updateSettings: function(options) {
+            // merge settings with new values
+            this.settings = $.extend({}, this.settings, options);
         }
     });
 
