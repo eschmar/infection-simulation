@@ -19,7 +19,7 @@
             initial: '#ececec',
             immune: '#969320',
             sick: '#AA3939',
-            dead: '#000000'
+            dead: '#333333'
         },
         colorEmpty: '#fafafa',
         transparent: true,

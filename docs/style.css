@@ -49,3 +49,31 @@ body  {
 canvas {
     margin: 0 auto;
 }
+
+.infected {
+    color: white;
+    background: #AA3939;
+}
+
+.dead {
+    color: white;
+    background: #333333;
+}
+
+.immune {
+    color: white;
+    background: #969320;
+}
+
+.legend {
+    border-top: 1px solid rgba(0,0,0,.1);
+}
+
+.mdl-chip {
+    height: 20px;
+    line-height: 22px;
+}
+
+.mdl-chip .mdl-chip__text {
+    font-size: 11px;
+}
